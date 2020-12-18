@@ -1,0 +1,200 @@
+@media print {
+  .hiderow {
+    display: none;
+    },
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border: none; /* If you want to remove the border as well */
+      background: none;
+      },
+
+      .date >>> input {
+        border: none;
+        background: transparent;
+
+      }
+
+      thead th {
+        background-color:grey !important;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+        font-weight: bold;
+        color: #fff !important;
+        padding: 4px 3px 4px 4px;
+        text-align: left;
+      }
+      #items td.balance { background: #a6a6a6 !important; }
+    }
+
+    .header {
+
+      width:100%;
+      margin: 0px 0;
+      padding: 0px 0px;
+
+    }
+
+    .header h1 {
+      text-align: center;
+      align-self: center;
+      font-size: 25px;
+    }
+
+    .header h2 {
+      align: right;
+      text-align: right;
+    }
+
+    .header p {
+      text-align: center;
+      align-self: center;
+    }
+
+    .img {
+      float: left; position: relative;
+      margin-top: 0;
+      max-width: 100px;
+      max-height: 100px;
+      overflow: hidden;
+      padding-top: 0px;
+    }
+
+    .vehicle {
+      overflow: hidden;
+      padding-top:10px;
+      padding-bottom:10px;
+      float: left;
+    }
+
+    .date >>> input {
+      border: none;
+      background: transparent;
+      width: 100px;
+    }
+
+    .usermain {
+      width: 100%;
+    }
+    .footer {
+      padding-top:10px;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .footer p {
+      text-align: center;
+    }
+
+    .footer p.sign {
+      text-align: right;
+    }
+
+    .footer p.BuyersSign {
+      text-align: left;
+    }
+
+    .invoicetable {
+      border: 1px solid black;
+      height: 400px;
+
+    }
+
+    .invoicetable tr.item-row td { border: 1px solid black; vertical-align: top; border-bottom: none; border-top: none; padding-top: 10px; text-align: center;}
+    .invoicetable td.quantity { width: 100px;}
+    .invoicetable td.description { width: 250px; padding-left: 10px; }
+    .invoicetable td.cost { width: 100px; padding-left: 10px; }
+    .invoicetable td.price { width: 100px; padding-left: 10px; }
+    .invoicetable td.qtl { width: 80px;}
+    .invoicetable td.Sno {width: 50px;}
+
+    .unitcost {
+      text-align: center;
+      width: 100px;
+    }
+
+    .invoicetable thead th {
+      background-color:grey;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
+      font-weight: bold;
+      color: #fff;
+      padding: 4px 3px 4px 4px;
+      text-align: center;
+    }
+
+    .AmounttoWords {
+      text-transform: capitalize;
+      font: italic small-caps bold 15px/30px Georgia, serif;
+    }
+
+    .usertable {
+      border: 1px solid black;
+      height: 150px;
+    }
+
+    .usertable thead th {
+      background-color:grey;
+      border-bottom: 0.5px solid black;
+      border-right: 0.5px solid black;
+      font-weight: bold;
+      color: #fff;
+      padding: 4px 3px 4px 4px;
+      text-align: left;
+      font: italic small-caps bold 10px/20px Georgia, serif;
+    }
+
+    .usertable tr.user-row td { border: 1px solid black; vertical-align:top; height:10px;}
+
+    .usercontent {
+      width: 500px;
+      border: none;
+    }
+
+    .invoicenumber {
+      border: 1px solid black;
+      float: right;
+    }
+
+    .invoicenumber thead th {
+      background-color:grey;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
+      font-weight: bold;
+      color: #fff;
+      text-align: left;
+      font: italic small-caps bold 10px/20px Georgia, serif;
+    }
+
+    .invoicenumber tr.invoice-row td { border: 1px solid black; }
+
+    * { margin: 0; padding: 0;}
+    body { font: 14px/1.4 Georgia, serif; }
+    #page-wrap { width: 950px; margin: 0 auto;}
+
+    textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; }
+    #customer { overflow: hidden; padding-top:20px;}
+    #customer-title { font-size: 20px; font-weight: bold; float: left; }
+    #identity {overflow: hidden; float: left; padding-top:0px;}
+    #terms { text-align: left;  padding-top: 0px;}
+    #items { width: 100%; margin: 0; border: 1px solid black; padding-top: 0;}
+    #items table {height: 20px;}
+    #items textarea { width: 60px; height: 20px; }
+    #items td.total-line {  text-align: right; }
+    #items td.total-value {  padding: 5px; }
+    #items td.balance { background: #a6a6a6; }
+    #items td.blank { border: 1px; }
+
+    .logistics {
+
+      padding: 5px;
+      background: #a6a6a6;
+      width: 50px;
+    }
+
+    textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }
+
+    .delete-wpr { position: relative; }
+    .delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px; }

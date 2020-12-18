@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  host: 127.0.0.1
+  port: 5432
+  username: postgres
+
+uat_default: &uat_default
+  adapter: postgresql
+  host: 127.0.0.1
+  port: 5432
+  username: postgres
+
+prod_default: &prod_default
+  adapter: postgresql
+  host: 127.0.0.1
+  port: 5432
+  username: postgres
+
+development:
+  <<: *default
+  database: lpm_rice_mill
+
+test:
+  <<: *default
+  database: lpm_rice_mill_test
+
+production:
+  <<: *prod_default
+  database: lpm_rice_mill
+
+uat:
+  <<: *uat_default
+  database: lpm_rice_mill

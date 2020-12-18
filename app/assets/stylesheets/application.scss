@@ -1,0 +1,50 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ */
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+@import 'bootstrap-datetimepicker';
+@import 'bootstrap3-switch';
+/*= require jquery.dataTables.min.css */
+
+body {
+	padding-top: 50px;
+}
+
+.btn {
+    margin-right: 8px;
+}
+
+.comboboxsize {
+  width:200px;
+}
+
+.number{
+  text-align: right;
+}
+
+.navbar-nav {
+  li {
+    font-size: .8em;
+  }
+}
+.splash {
+  background-image: image-url("LPM2.png");
+  background-size: 700px;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
