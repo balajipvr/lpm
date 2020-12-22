@@ -103,23 +103,29 @@
           <thead>
             <th>S.No</th>
             <th>Description</th>
+            <th>UnitWeight</th>
             <th>Quantity</th>
             <th colspan="2">QTL</th>
             <th>Unit Cost</th>
             <th>Price</th>
           </thead>
-          <tr class="item-row" v-for="(item, index) in items">
+          <tr class="item-row" v-for="(item, index) in itemspecs">
             <td class="Sno"><div class="delete-wpr">{{ index + 1 }}<a class="delete" v-on:click="deleteItem(index)"   title="Remove row">X</a></div></td>
-            <td class="description"><select class="custom-select" name="selectItem" v-on:click="loadItemQty()" v-model="itemQty">
-              <option v-for="itemDetail in itemDetails" :value="itemDetail">
-                {{ itemDetail.item_name }}
+            <td class="description"><select class="custom-select" name="selectItem" v-on:change="getItemname($event)" v-model="itemNames">
+              <option v-for="itemDetail in item.item_name">
+                {{ itemDetail }}
               </option>
             </select></td>
-            <td class="quantity"><input type="text" class="unitcost" v-model="item.quantity" style="border:none"></td>
+            <td class="description"><select class="custom-select" name="selectItem">
+              <option v-for="item_qty in item.item_unit_qty" :value="item_qty" v-bind:value= "unit_qty">
+                {{ item_qty }}
+              </option>
+            </select></td>
+            <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty"  style="border:none"></td>
             <td class="qtl"><span>{{  qtl.number }}</span></td>
             <td class="qtl">{{ qtl.decimal }}</td>
-            <td class="price"><input type="text" class="unitcost"  v-model="item.price" style="border:none"></td>
-            <td class="cost"><span>{{ item.price * item.quantity }}</span></td>
+            <td class="price"><input type="text" class="unitcost"  v-model="item.item_price" style="border:none"></td>
+            <td class="cost"><span>{{item.price * item.quantity}}</span></td>
           </tr>
         </table>
         <table id="items">
@@ -145,8 +151,8 @@
         <div id="terms">
           <table class="usertable">
             <thead>
-                <th>Company's Bank Details</th>
-                <th></th>
+              <th>Company's Bank Details</th>
+              <th></th>
             </thead>
             <tr class="user-row">
               <td><label for="Bank Name">Bank Name:</label></td>
@@ -192,9 +198,12 @@ export default {
     return {
       orderdetail : new OrderDetail(),
       customerNames: [],
+      unit_qty: 0,
+      itemspecs: [],
       company_details: [],
       itemDetails: [],
       itemQty: [],
+      itemNames: [],
       logistics: 0,
       items: [
         {
@@ -225,17 +234,16 @@ export default {
 
     qtl: function () {
 
-        var unit_qty = parseFloat(this.itemQty.unit_qty);
-        var qtlsplit = {};
-        var qtlv = 0;
-        var qtl = _.each(this.items, function (item) {
+      var unit_qty = parseFloat(this.item_qty);
+      var qtlsplit = {};
+      var qtlv = 0;
+      var qtl = _.each(this.itemspecs, function (item) {
+        qtlv =   ((unit_qty * item.item_qty)/100).toFixed(2);
+        qtlsplit["number"] = Math.trunc(qtlv);
+        qtlsplit["decimal"] =  (qtlv - Math.floor(qtlv)).toFixed(2);
 
-              qtlv =   ((unit_qty * item.quantity)/100).toFixed(2);
-              qtlsplit["number"] = Math.trunc(qtlv);
-              qtlsplit["decimal"] =  (qtlv - Math.floor(qtlv)).toFixed(2);
-
-            })
-        return qtlsplit;
+      })
+      return qtlsplit;
 
     },
 
@@ -258,30 +266,46 @@ export default {
     loadItems: function() {
       return ItemDetailService.itemDetail().then(
         resp => {
-          this.itemDetails = resp.data;
-
+          this.itemDetails = this.orderdetail.getItemdetail(resp.data);
+          this.itemspecs = this.orderdetail.itemdata;
         }
       )
     },
 
     loadItemQty: function() {
-          },
+    },
 
     addNewItem: function() {
-      this.items.push(
-        {  quantity: 0, price: 0,qtl: 0}
+      let item_name = _.flatten(_.map(this.itemspecs,'item_name'))
+      let item_unitqty = _.flatten(_.map(this.itemspecs,'item_unit_qty'))
+
+      this.itemspecs.push(
+        {
+          item_name: item_name,
+          item_qty: 0,
+          item_price: 0,
+          item_qtl: 0,
+          item_unit_qty: item_unitqty
+        }
       )
     },
     deleteItem: function(index) {
-      this.items.splice(index, 1)
+      this.itemspecs.splice(index, 1)
     },
 
+    getItemname: function(event) {
+      // this.itemNames = event.target.value;
+      console.log(this.itemNames);
+      var itemQty = _.each(this.itemspecs, function (item){
+        console.log(item);
+      })
+    },
     createOrder: function() {
       this.orderdetail.customer_id = this.company_details.id;
-      // this.orderdetail.item_name  = this.itemQty.item_name;
-      //this.orderdetail.item_qty = this.item.quantity;
-      console.log(this.orderdetail);
-}
+      this.orderdetail.itemName = this.itemName;
+
+    },
+
   },
   mounted() {
     this.loadCustomerName();
