@@ -8,21 +8,24 @@ function OrderDetail() {
  this.company_gst = "33AIGPP8701R2Z0";
  this.customer_id = [];
  this.itemName = [];
+ this.unitqty = [];
  // this.item_name = [];
  // this.item_qty = [];
 }
 
 OrderDetail.prototype.getItemdetail = function(items) {
-let itemdetail = _.map(items,'item_name');
-let item_unitqty = _.map(items,'unit_qty');
+this.itemName = _.map(items,'item_name');
+this.unitqty = _.map(items,'unit_qty');
 this.itemdata = [
 {
-  item_name: itemdetail,
+  item_name: "",
   item_qty: 0,
   item_price: 0,
   item_qtl: 0,
-  item_unit_qty: item_unitqty
+  item_unit_qty: 0
 }
 ]
+
+
 }
 export default OrderDetail;

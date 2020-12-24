@@ -111,14 +111,14 @@
           </thead>
           <tr class="item-row" v-for="(item, index) in itemspecs">
             <td class="Sno"><div class="delete-wpr">{{ index + 1 }}<a class="delete" v-on:click="deleteItem(index)"   title="Remove row">X</a></div></td>
-            <td class="description"><select class="custom-select" name="selectItem" v-on:change="getItemname($event)" v-model="itemNames">
-              <option v-for="itemDetail in item.item_name">
-                {{ itemDetail }}
+            <td class="description"><select v-model="item.item_name">
+              <option v-for="itemName in itemNames">
+                {{ itemName }}
               </option>
             </select></td>
-            <td class="description"><select class="custom-select" name="selectItem">
-              <option v-for="item_qty in item.item_unit_qty" :value="item_qty" v-bind:value= "unit_qty">
-                {{ item_qty }}
+            <td class="description"><select class="custom-select" name="selectItem" v-model="item.item_unit_qty">
+              <option v-for="unit_qty in itemUnitQty" >
+                {{ unit_qty }}
               </option>
             </select></td>
             <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty"  style="border:none"></td>
@@ -204,6 +204,7 @@ export default {
       itemDetails: [],
       itemQty: [],
       itemNames: [],
+      itemUnitQty: [],
       logistics: 0,
       items: [
         {
@@ -238,7 +239,7 @@ export default {
       var qtlsplit = {};
       var qtlv = 0;
       var qtl = _.each(this.itemspecs, function (item) {
-        qtlv =   ((unit_qty * item.item_qty)/100).toFixed(2);
+        qtlv =   ((item.item_qty * item.item_unit_qty)/100).toFixed(2);
         qtlsplit["number"] = Math.trunc(qtlv);
         qtlsplit["decimal"] =  (qtlv - Math.floor(qtlv)).toFixed(2);
 
@@ -268,6 +269,9 @@ export default {
         resp => {
           this.itemDetails = this.orderdetail.getItemdetail(resp.data);
           this.itemspecs = this.orderdetail.itemdata;
+          this.itemNames = this.orderdetail.itemName;
+          this.itemUnitQty = this.orderdetail.unitqty;
+          console.log(this.itemUnitQty);
         }
       )
     },
@@ -281,11 +285,11 @@ export default {
 
       this.itemspecs.push(
         {
-          item_name: item_name,
+          item_name: "",
           item_qty: 0,
           item_price: 0,
           item_qtl: 0,
-          item_unit_qty: item_unitqty
+          item_unit_qty: 0
         }
       )
     },
@@ -294,13 +298,17 @@ export default {
     },
 
     getItemname: function(event) {
-      // this.itemNames = event.target.value;
-      console.log(this.itemNames);
+
+      var item = {}
+      this.itemNames.push(event.target.value);
+      item["name"] = this.itemNames
+
+      console.log(item);
+    },
+    createOrder: function() {
       var itemQty = _.each(this.itemspecs, function (item){
         console.log(item);
       })
-    },
-    createOrder: function() {
       this.orderdetail.customer_id = this.company_details.id;
       this.orderdetail.itemName = this.itemName;
 
