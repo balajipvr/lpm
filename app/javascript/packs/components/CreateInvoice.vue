@@ -116,16 +116,16 @@
                 {{ itemName }}
               </option>
             </select></td>
-            <td class="description"><select class="custom-select" name="selectItem" v-model="item.item_unit_qty">
+            <td class="quantity"><select class="custom-select" name="selectItem" v-model="item.item_unit_qty">
               <option v-for="unit_qty in itemUnitQty" >
                 {{ unit_qty }}
               </option>
             </select></td>
-            <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty"  style="border:none"></td>
-            <td class="qtl"><span>{{  qtl.number }}</span></td>
-            <td class="qtl">{{ qtl.decimal }}</td>
+            <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty" style="border:none"></td>
+            <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_number" v-on:click="qtlcalc"  style="border:none"></td>
+            <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_decimal"  style="border:none"></td>
             <td class="price"><input type="text" class="unitcost"  v-model="item.item_price" style="border:none"></td>
-            <td class="cost"><span>{{item.price * item.quantity}}</span></td>
+            <td class="cost"><span>{{item.item_price * item.item_qty}}</span></td>
           </tr>
         </table>
         <table id="items">
@@ -198,7 +198,6 @@ export default {
     return {
       orderdetail : new OrderDetail(),
       customerNames: [],
-      unit_qty: 0,
       itemspecs: [],
       company_details: [],
       itemDetails: [],
@@ -206,14 +205,6 @@ export default {
       itemNames: [],
       itemUnitQty: [],
       logistics: 0,
-      items: [
-        {
-          quantity: 0,
-          qtl:0,
-          price: 0
-        },
-
-      ],
       date: new Date()
     }
   },
@@ -223,8 +214,8 @@ export default {
 
   computed: {
     subTotal: function() {
-      var subtotal = this.items.reduce(function(accumulator, item) {
-        return accumulator + (item.price * item.quantity);
+      var subtotal = this.itemspecs.reduce(function(accumulator, item) {
+        return accumulator + (item.item_price * item.item_qty);
       }, 0)
       return subtotal;
     },
@@ -232,22 +223,6 @@ export default {
     total: function() {
       return parseInt(this.subTotal) - parseInt(this.logistics);
     },
-
-    qtl: function () {
-
-      var unit_qty = parseFloat(this.item_qty);
-      var qtlsplit = {};
-      var qtlv = 0;
-      var qtl = _.each(this.itemspecs, function (item) {
-        qtlv =   ((item.item_qty * item.item_unit_qty)/100).toFixed(2);
-        qtlsplit["number"] = Math.trunc(qtlv);
-        qtlsplit["decimal"] =  (qtlv - Math.floor(qtlv)).toFixed(2);
-
-      })
-      return qtlsplit;
-
-    },
-
     amountInWords: function () {
       var converter = require('number-to-words');
       var words = converter.toWords(this.total);
@@ -271,7 +246,6 @@ export default {
           this.itemspecs = this.orderdetail.itemdata;
           this.itemNames = this.orderdetail.itemName;
           this.itemUnitQty = this.orderdetail.unitqty;
-          console.log(this.itemUnitQty);
         }
       )
     },
@@ -280,15 +254,14 @@ export default {
     },
 
     addNewItem: function() {
-      let item_name = _.flatten(_.map(this.itemspecs,'item_name'))
-      let item_unitqty = _.flatten(_.map(this.itemspecs,'item_unit_qty'))
 
       this.itemspecs.push(
         {
           item_name: "",
           item_qty: 0,
           item_price: 0,
-          item_qtl: 0,
+          item_qtl_number: 0,
+          item_qtl_decimal: 0,
           item_unit_qty: 0
         }
       )
@@ -297,20 +270,25 @@ export default {
       this.itemspecs.splice(index, 1)
     },
 
-    getItemname: function(event) {
+    qtlcalc: function() {
 
-      var item = {}
-      this.itemNames.push(event.target.value);
-      item["name"] = this.itemNames
+      _.each(this.itemspecs, function (item) {
 
-      console.log(item);
+        let  qtl = ((item.item_qty * item.item_unit_qty)/100).toFixed(2);
+        item.item_qtl_number = Math.trunc(qtl);
+        item.item_qtl_decimal = (qtl - Math.floor(qtl)).toFixed(2);
+      })
+
     },
+
     createOrder: function() {
-      var itemQty = _.each(this.itemspecs, function (item){
-        console.log(item);
+      this.orderdetail.itemdetails = _.each(this.itemspecs, function (item){
+          return item
       })
       this.orderdetail.customer_id = this.company_details.id;
       this.orderdetail.itemName = this.itemName;
+      this.orderdetail.logistics = this.logistics
+      console.log(this.orderdetail);
 
     },
 

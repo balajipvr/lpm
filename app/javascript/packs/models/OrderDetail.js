@@ -9,8 +9,8 @@ function OrderDetail() {
  this.customer_id = [];
  this.itemName = [];
  this.unitqty = [];
- // this.item_name = [];
- // this.item_qty = [];
+ this.itemdetails = [];
+ this.logistics = 0;
 }
 
 OrderDetail.prototype.getItemdetail = function(items) {
@@ -21,7 +21,8 @@ this.itemdata = [
   item_name: "",
   item_qty: 0,
   item_price: 0,
-  item_qtl: 0,
+  item_qtl_number: 0,
+  item_qtl_decimal: 0,
   item_unit_qty: 0
 }
 ]
