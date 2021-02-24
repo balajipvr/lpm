@@ -95,7 +95,7 @@
             </thead>
             <tr class="invoice-row">
               <td>Vehicle-Number</td>
-              <td><input type="text" class="unitcost" style="border:none"></td>
+              <td><input type="text" class="unitcost" v-model="orderdetail.vehicle" style="border:none"></td>
             </tr>
           </table>
         </div>
@@ -124,8 +124,8 @@
             <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty" style="border:none"></td>
             <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_number" v-on:click="qtlcalc"  style="border:none"></td>
             <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_decimal"  style="border:none"></td>
-            <td class="price"><input type="text" class="unitcost"  v-model="item.item_price" style="border:none"></td>
-            <td class="cost"><span>{{item.item_price * item.item_qty}}</span></td>
+            <td class="price"><input type="text" class="unitcost"  v-model="item.unit_price" style="border:none"></td>
+            <td class="cost"><span>{{item.unit_price * item.item_qty}}</span></td>
           </tr>
         </table>
         <table id="items">
@@ -145,7 +145,7 @@
           <tr>
             <td colspan="2" class="AmounttoWords"><p>Amount in Words:</p>{{amountInWords}} Rupees Only</td>
             <td colspan="2" class="total-line balance">Total</td>
-            <td class="total-value balance"><div id="total">{{total}}</div></td>
+            <td class="total-value balance"><input type="text" class="logistics" v-model="total" style="border:none"></td>
           </tr>
         </table>
         <div id="terms">
@@ -188,6 +188,7 @@
 <script>
 import CustomerDetailService from '../service/CustomerDetailService.js';
 import ItemDetailService from '../service/ItemDetailService.js';
+import CreateOrderService from '../service/CreateOrderService.js'
 import OrderDetail from '../models/OrderDetail.js';
 import Datepicker from 'vuejs-datepicker';
 import _ from 'lodash';
@@ -215,7 +216,7 @@ export default {
   computed: {
     subTotal: function() {
       var subtotal = this.itemspecs.reduce(function(accumulator, item) {
-        return accumulator + (item.item_price * item.item_qty);
+        return accumulator + (item.unit_price * item.item_qty);
       }, 0)
       return subtotal;
     },
@@ -243,7 +244,7 @@ export default {
       return ItemDetailService.itemDetail().then(
         resp => {
           this.itemDetails = this.orderdetail.getItemdetail(resp.data);
-          this.itemspecs = this.orderdetail.itemdata;
+          this.itemspecs = this.orderdetail.order_items;
           this.itemNames = this.orderdetail.itemName;
           this.itemUnitQty = this.orderdetail.unitqty;
         }
@@ -259,7 +260,7 @@ export default {
         {
           item_name: "",
           item_qty: 0,
-          item_price: 0,
+          unit_price: 0,
           item_qtl_number: 0,
           item_qtl_decimal: 0,
           item_unit_qty: 0
@@ -282,13 +283,16 @@ export default {
     },
 
     createOrder: function() {
-      this.orderdetail.itemdetails = _.each(this.itemspecs, function (item){
-          return item
-      })
       this.orderdetail.customer_id = this.company_details.id;
-      this.orderdetail.itemName = this.itemName;
-      this.orderdetail.logistics = this.logistics
+      this.orderdetail.customer_email = this.company_details.company_name;
+      this.orderdetail.customer_mobilenumber = this.company_details.mobilenumber;
+      this.orderdetail.logisitcs = this.logistics;
+      this.orderdetail.order_total = this.total;
       console.log(this.orderdetail);
+      CreateOrderService.createOrder({
+      order_detail: this.orderdetail
+}
+)
 
     },
 
