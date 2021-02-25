@@ -34,6 +34,7 @@ gem 'twitter-bootstrap-rails-confirm'
 gem 'bootstrap-switch-rails'
 gem 'bootstrap3-datetimepicker-rails'
 gem 'font-awesome-sass'
+gem 'unique_numbers', github: "martinbeck/unique_numbers"
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'

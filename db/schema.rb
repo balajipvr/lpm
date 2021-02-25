@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210224064335) do
+ActiveRecord::Schema.define(version: 20210224144518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,18 @@ ActiveRecord::Schema.define(version: 20210224064335) do
     t.string "logisitcs"
     t.integer "order_total"
     t.string "vehicle"
+    t.string "invoice_number"
+  end
+
+  create_table "unique_numbers_generators", force: :cascade do |t|
+    t.string "type"
+    t.string "name"
+    t.string "format"
+    t.text "settings"
+    t.datetime "last_generated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_unique_numbers_generators_on_name"
   end
 
   create_table "users", force: :cascade do |t|

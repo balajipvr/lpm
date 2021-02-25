@@ -45,7 +45,7 @@
                 <th>Date</th>
               </thead>
               <tr class="invoice-row">
-                <td>0002</td>
+                <td><input type="text" id="gst" v-model="invoice_number" readonly class="date"></td>
                 <td><datepicker v-model="date" class="date"></datepicker></td>
               </tr>
             </table>
@@ -121,9 +121,9 @@
                 {{ unit_qty }}
               </option>
             </select></td>
-            <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty" style="border:none"></td>
+            <td class="quantity"><input type="text" class="unitcost" v-model="item.item_qty" style="border:none" required></td>
             <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_number" v-on:click="qtlcalc"  style="border:none"></td>
-            <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_decimal"  style="border:none"></td>
+            <td class="qtl"><input type="text" class="unitcost" v-model="item.item_qtl_decimal"  style="border:none" required></td>
             <td class="price"><input type="text" class="unitcost"  v-model="item.unit_price" style="border:none"></td>
             <td class="cost"><span>{{item.unit_price * item.item_qty}}</span></td>
           </tr>
@@ -181,7 +181,12 @@
         </div>
       </div>
     </div>
-    <button v-print="'#printMe'" v-on:click="createOrder()">Print</button>
+    <div v-if="orderCreated">
+    <button v-on:click="createOrder()" class="btn btn-primary">Submit</button>
+    </div>
+    <div v-if="invoicenumGenerated">
+      <button class="btn btn-primary" v-print="'#printMe'">Print</button>
+    </div>
   </div>
 </template>
 
@@ -191,6 +196,7 @@ import ItemDetailService from '../service/ItemDetailService.js';
 import CreateOrderService from '../service/CreateOrderService.js'
 import OrderDetail from '../models/OrderDetail.js';
 import Datepicker from 'vuejs-datepicker';
+import { extend } from 'vee-validate';
 import _ from 'lodash';
 import Vue from 'vue';
 export default {
@@ -205,6 +211,9 @@ export default {
       itemQty: [],
       itemNames: [],
       itemUnitQty: [],
+      invoice_number: "",
+      invoicenumGenerated: false,
+      orderCreated: true,
       logistics: 0,
       date: new Date()
     }
@@ -212,7 +221,6 @@ export default {
   components: {
     Datepicker
   },
-
   computed: {
     subTotal: function() {
       var subtotal = this.itemspecs.reduce(function(accumulator, item) {
@@ -288,19 +296,21 @@ export default {
       this.orderdetail.customer_mobilenumber = this.company_details.mobilenumber;
       this.orderdetail.logisitcs = this.logistics;
       this.orderdetail.order_total = this.total;
-      console.log(this.orderdetail);
-      CreateOrderService.createOrder({
-      order_detail: this.orderdetail
-}
-)
-
-    },
-
+      CreateOrderService.createOrder({order_detail: this.orderdetail}).then(resp => {
+        this.invoice_number = resp.data.invoice_num;
+        if (resp.data.status == "success"){
+            this.$alert("Order Created Succefully");
+              this.orderCreated = false;
+              this.invoicenumGenerated = true;
+          };
+        })
   },
-  mounted() {
-    this.loadCustomerName();
-    this.loadItems();
-  }
+
+},
+mounted() {
+  this.loadCustomerName();
+  this.loadItems();
+}
 }
 
 </script>
