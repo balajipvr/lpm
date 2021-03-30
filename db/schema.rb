@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210224144518) do
+ActiveRecord::Schema.define(version: 20210329162542) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,8 @@ ActiveRecord::Schema.define(version: 20210224144518) do
     t.integer "item_unit_qty"
     t.integer "item_price"
     t.bigint "orders_id"
+    t.integer "item_qtl_number"
+    t.integer "item_qtl_decimal"
     t.index ["orders_id"], name: "index_order_items_on_orders_id"
   end
 

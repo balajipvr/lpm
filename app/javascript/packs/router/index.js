@@ -1,19 +1,26 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import CreateInvoice from '../components/CreateInvoice.vue';
+import NewInvoice from '../components/NewInvoice.vue';
 
 Vue.use(Router);
 
 const router = new Router({
-    mode: 'history',
-    routes: [
+  mode: 'history',
+  routes: [
 
-        {
-            path: '/generate_invoice',
-            name: 'CreateInvoice',
-            component: CreateInvoice
-        }
-    ]
+    {
+      path: '/generate_invoice',
+      name: 'CreateInvoice',
+      component: CreateInvoice
+    },
+
+    {
+      path: '/get_invoice_details',
+      name: 'NewInvoice',
+      component: NewInvoice
+    }
+  ]
 })
 
 // router.beforeEach((to, from, next) => {

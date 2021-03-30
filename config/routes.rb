@@ -11,4 +11,9 @@ Rails.application.routes.draw do
     get 'itemDetail', to: 'generate_invoice#getItems'
   end
 end
+  resources :get_invoice_details do
+    collection do
+
+    end
+  end
 end
