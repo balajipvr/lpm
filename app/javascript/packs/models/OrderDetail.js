@@ -32,4 +32,17 @@ this.order_items = [
 
 
 }
+
+OrderDetail.prototype.invoiceDetails = function(invoice) {
+
+ console.log(invoice);
+ this.customer_id = invoice.customer_id;
+ this.customer_name = invoice.customer_name;
+ this.invoice_number = invoice.invoice_number;
+ this.logisitcs = invoice.logisitcs;
+ this.order_items = invoice.order_items;
+ this.order_total = invoice.order_total;
+ this.vehicle = invoice.vehicle;
+
+}
 export default OrderDetail;

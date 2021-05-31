@@ -3,15 +3,15 @@
     <table>
       <tr>
         <td><label for="Name" class="form-control">Customer Name:</label></td>
-        <td><select class="form-control" name="selectCustomer" v-on:change="getCustomerid()" v-model="createorder.customerName">
+        <td><select class="form-control" name="selectCustomer" :disabled=isEdit v-on:change="getCustomerid()" v-model="createorder.customerName">
           <option v-for="customerName in customerNames">
-            {{ customerName.company_name }}
+            {{ customerName.name }}
           </option>
         </select></td>
       </tr>
       <tr>
         <td><label for="Name" class="form-control">Vehicle-Number:</label></td>
-        <td><input type="text" class="form-control" style="width:120px" v-model="createorder.vehicleNumber"></td>
+        <td><input type="text" class="form-control" style="width:120px" v-model="createorder.vehicle"></td>
       </tr>
       <tr>
         <td><label for="Name" class="form-control">Logistics:</label></td>
@@ -37,7 +37,7 @@
         <th colspan="2">QTL</th>
         <th> Price </th>
       </thead>
-      <tr v-for="(items_detail, k) in createorder.item_details" :key="k">
+      <tr v-for="(items_detail, k) in createorder.order_items" :key="k">
         <td scope="row" class="trashIconContainer">
           <i class="far fa-trash-alt" v-on:click="deleteRow(k)"></i>
         </td>
@@ -91,13 +91,14 @@ export default {
     return {
       createorder : new CreateOrder(),
       customerNames: [],
-      items: []
+      items: [],
+      isEdit: false
     }
   },
   computed: {
 
     subtotal: function() {
-      var subtotal = this.createorder.item_details.reduce(function(accumulator, item) {
+      var subtotal = this.createorder.order_items.reduce(function(accumulator, item) {
         return accumulator + (item.unit_price * item.item_qty);
       }, 0)
       return subtotal;
@@ -117,6 +118,7 @@ export default {
       })
     },
     loadItems: function() {
+
       return ItemDetailService.itemDetail().then(
         resp => {
           this.items = resp.data
@@ -125,7 +127,7 @@ export default {
       )
     },
     addNewItem: function() {
-      this.createorder.item_details.push(
+      this.createorder.order_items.push(
         {
           item_name: "",
           item_qty: 0,
@@ -137,11 +139,11 @@ export default {
       )
     },
     deleteRow: function(k) {
-      this.createorder.item_details.splice(k, 1)
+      this.createorder.order_items.splice(k, 1)
     },
     qtlcalc: function() {
 
-      _.each(this.createorder.item_details, function (item) {
+      _.each(this.createorder.order_items, function (item) {
 
         let  qtl = ((item.item_qty * item.item_unit_qty)/100).toFixed(2);
         item.item_qtl_number = Math.trunc(qtl);
@@ -161,22 +163,54 @@ export default {
         return getdetails
       })
       this.createorder.customer_id = cust_details.id;
-      this.createorder.customer_email = cust_details.email;
+      this.createorder.customer_name = cust_details.name;
       this.createorder.customer_mobilenumber = cust_details.mobilenumber;
 
     },
     createOrder: function() {
       this.createorder.subtotal = this.subtotal;
       this.createorder.total = this.total;
-      console.log(this.createorder);
-      // CreateOrderService.createOrder({order_detail: this.createorder}).then(resp => {
-      //
-      // })
+
+      if(!this.isEdit)
+      {
+        CreateOrderService.createOrder({order_detail: this.createorder}).then(resp => {
+          if (resp.data.status == "success"){
+            this.$alert("Order Created Succefully");
+            Turbolinks.visit ('/admin/orders')
+          };
+        })
+      }
+      else
+      {
+        CreateOrderService.updateOrder({
+          order_detail: this.createorder
+        },this.createorder.id).then(resp => {
+          if (resp.data.status == "success"){
+            this.$alert("Order Updated Succefully");
+            Turbolinks.visit ('/admin/orders')
+          };
+        })
+      }
+    },
+
+    loadOrderdetails: function () {
+      let params = (new URL(document.location)).searchParams;
+      let order_id = params.get("id");
+      if (!order_id) {
+        return;
+      }
+      this.isEdit = true;
+      CreateOrderService.loadOrder(order_id).then(resp => {
+        this.createorder = new CreateOrder(resp.data);
+      });
+
     }
   },
   mounted() {
+    this.loadOrderdetails();
     this.loadCustomerName();
     this.loadItems();
+
   }
 }
 </script>

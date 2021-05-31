@@ -45,7 +45,7 @@
                 <th>Date</th>
               </thead>
               <tr class="invoice-row">
-                <td><input type="text" id="gst" v-model="invoice_number" readonly class="date"></td>
+                <td><input type="text" id="gst" v-model="orderdetail.invoice_number" readonly class="date"></td>
                 <td><datepicker v-model="date" class="date"></datepicker></td>
               </tr>
             </table>
@@ -60,11 +60,7 @@
             </thead>
             <tr class="user-row">
               <td><label for="Name">Name:</label></td>
-              <td><select class="custom-select" name="selectCustomer" v-on:change="loadCustomerDetails()" v-model="company_details">
-                <option v-for="customerName in customerNames" :value="customerName">
-                  {{ customerName.company_name }}
-                </option>
-              </select></td>
+              <td><input type="text" id="CompanyAddress" name="CompanyAddress" :value="orderdetail.customer_name" readonly class="usercontent"></td>
             </tr>
             <tr class="user-row">
               <td><label for="CompanyAddress">Address:</label></td>
@@ -111,7 +107,7 @@
           </thead>
           <tr class="item-row" v-for="(item, index) in itemspecs">
             <td class="Sno"><div class="delete-wpr">{{ index + 1 }}<a class="delete" v-on:click="deleteItem(index)"   title="Remove row">X</a></div></td>
-            <td class="description"><select v-model="item.item_name">
+            <td class="description"><select v-on:change="getselectedItem($event)" v-model="item.item_name">
               <option v-for="itemName in itemNames">
                 {{ itemName }}
               </option>
@@ -130,7 +126,7 @@
         </table>
         <table id="items">
           <tr class="hiderow">
-            <td colspan="5"><a id="addrow" v-on:click="addNewItem" title="Add a row">Add a row</a></td>
+
           </tr>
           <tr>
             <td colspan="2" class="blank"> </td>
@@ -182,7 +178,7 @@
       </div>
     </div>
     <div v-if="orderCreated">
-    <button v-on:click="createOrder()" class="btn btn-primary">Submit</button>
+      <button v-on:click="createOrder()" class="btn btn-primary">Submit</button>
     </div>
     <div v-if="invoicenumGenerated">
       <button class="btn btn-primary" v-print="'#printMe'">Print</button>
@@ -246,8 +242,6 @@ export default {
       })
     },
 
-    loadCustomerDetails: function() {},
-
     loadItems: function() {
       return ItemDetailService.itemDetail().then(
         resp => {
@@ -259,58 +253,48 @@ export default {
       )
     },
 
-    loadItemQty: function() {
-    },
 
-    addNewItem: function() {
 
-      this.itemspecs.push(
-        {
-          item_name: "",
-          item_qty: 0,
-          unit_price: 0,
-          item_qtl_number: 0,
-          item_qtl_decimal: 0,
-          item_unit_qty: 0
-        }
-      )
-    },
-    deleteItem: function(index) {
-      this.itemspecs.splice(index, 1)
-    },
 
     qtlcalc: function() {
 
       _.each(this.itemspecs, function (item) {
-
-        let  qtl = ((item.item_qty * item.item_unit_qty)/100).toFixed(2);
+        let  qtl = ((item.item_qty * item.item_unit_qt)/100).toFixed(2);
         item.item_qtl_number = Math.trunc(qtl);
         item.item_qtl_decimal = (qtl - Math.floor(qtl)).toFixed(2);
       })
 
     },
 
-    createOrder: function() {
-      this.orderdetail.customer_id = this.company_details.id;
-      this.orderdetail.customer_email = this.company_details.company_name;
-      this.orderdetail.customer_mobilenumber = this.company_details.mobilenumber;
-      this.orderdetail.logisitcs = this.logistics;
-      this.orderdetail.order_total = this.total;
-      CreateOrderService.createOrder({order_detail: this.orderdetail}).then(resp => {
-        this.invoice_number = resp.data.invoice_num;
-        if (resp.data.status == "success"){
-            this.$alert("Order Created Succefully");
-              this.orderCreated = false;
-              this.invoicenumGenerated = true;
-          };
-        })
-  },
+    getselectedItem: function() {
 
-},
-mounted() {
-  this.loadCustomerName();
-  this.loadItems();
-}
+      _.each(this.itemspecs, function (item) {
+
+        let selectedItem = item.item_name
+        console.log();
+      })
+    },
+
+
+    loadInvoiceDetails: function() {
+      let params = (new URL(document.location)).searchParams;
+      let order_id = params.get("id");
+      CreateOrderService.loadOrder(order_id).then(resp => {
+        this.orderdetail = new OrderDetail
+        this.orderdetail.invoiceDetails(resp.data);
+        CustomerDetailService.customerDetail(this.orderdetail.customer_id).then(resp => {
+
+        })
+        console.log(this.orderdetail.customer_id);
+      });
+    },
+
+
+
+  },
+  mounted() {
+    this.loadInvoiceDetails()
+  }
 }
 
 </script>

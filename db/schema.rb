@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210329162542) do
+ActiveRecord::Schema.define(version: 20210407112750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20210329162542) do
     t.string "pincode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   create_table "items", force: :cascade do |t|
@@ -89,7 +90,7 @@ ActiveRecord::Schema.define(version: 20210329162542) do
 
   create_table "orders", force: :cascade do |t|
     t.string "customer_id"
-    t.string "customer_email"
+    t.string "customer_name"
     t.string "customer_mobilenumber"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -97,6 +98,8 @@ ActiveRecord::Schema.define(version: 20210329162542) do
     t.integer "order_total"
     t.string "vehicle"
     t.string "invoice_number"
+    t.bigint "customers_id"
+    t.index ["customers_id"], name: "index_orders_on_customers_id"
   end
 
   create_table "unique_numbers_generators", force: :cascade do |t|
