@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     loadCustomerName: function() {
-      return CustomerDetailService.customerName().then(resp => {
+      return CustomerDetailService.customerDetail().then(resp => {
         this.customerNames = resp.data;
       })
     },
